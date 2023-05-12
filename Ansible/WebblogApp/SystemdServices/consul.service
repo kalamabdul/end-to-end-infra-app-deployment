@@ -1,0 +1,8 @@
+[Unit]
+Description=HashiCorp Consul Service
+
+[Service]
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+
+[Install]
+WantedBy=multi-user.target

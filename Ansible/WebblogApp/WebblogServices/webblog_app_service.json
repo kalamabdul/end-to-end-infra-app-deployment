@@ -1,0 +1,29 @@
+{
+    "service": {
+      "name": "webblog_app",
+      "tags": [
+        "Python",
+        "production"
+      ],
+      "port": 8080,
+      "connect": { 
+        "sidecar_service": {
+          "proxy": {
+            "upstreams": [
+              {
+                "destination_name": "mongo",
+                "local_bind_port": 27017
+              }
+            ]
+          }
+        }
+      },
+      "check": {
+        "id": "webblog",
+        "name": "Webblog App TCP on port 8080",
+        "tcp": "localhost:8080",
+        "interval": "10s",
+        "timeout": "1s"
+      }
+    }
+  }

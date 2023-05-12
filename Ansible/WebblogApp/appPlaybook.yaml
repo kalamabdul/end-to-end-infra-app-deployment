@@ -1,0 +1,159 @@
+---
+- hosts: all
+  become_user: root
+  become: true
+  tasks:
+    # adding retries and delays for apt to catch up otherwise you get this error: Could not get lock /var/lib/dpkg/lock-frontend
+    - name: Install pip3, unzip, and Envoy Dependencies
+      apt:
+        update_cache: yes
+        pkg:
+        - python3-pip
+        - unzip
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+      register: result
+      until: result is not failed
+      retries: 20
+      delay: 30
+    - name: Download and install consul binary
+      unarchive:
+        src: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+        dest: /usr/local/bin/
+        remote_src: True
+    - name: Create consul config directory
+      file: state=directory path=/etc/consul.d
+    - name: Copy consul service to server and clients
+      copy: src=SystemdServices/consul.service dest=/etc/systemd/system/consul.service
+    - name: Add an Apt signing key
+      apt_key:
+        url: https://getenvoy.io/gpg
+        state: present
+    - name: Add Envoy repository into sources list
+      apt_repository:
+        repo: deb [arch=amd64] https://dl.bintray.com/tetrate/getenvoy-deb bionic stable
+        state: present
+    - name: Install Envoy
+      apt:
+        name: getenvoy-envoy
+        update_cache: yes
+
+- hosts: consul_server
+  become_user: root
+  become: true
+  tasks:
+    - name: Copy consul server config to server
+      copy: src=ConsulConfig/consul_server_config.hcl dest=/etc/consul.d
+    - name: Start consul service
+      systemd:
+        state: restarted
+        name: consul
+        daemon_reload: yes
+
+- hosts: consul_clients
+  become_user: root
+  become: true
+  tasks:
+    - name: Copy consul client config to clients
+      copy: src=ConsulConfig/consul_client_config.hcl dest=/etc/consul.d
+    - name: Start consul service
+      systemd:
+        state: restarted
+        name: consul
+        daemon_reload: yes
+
+- hosts: webblog-db-vm
+  become_user: root
+  become: true
+  tasks:
+    - name: Install Docker module for Python
+      pip:
+        name: docker
+    - name: Pull the Mongo Docker image
+      docker_image:
+        name: "mongo:4.2.7"
+        source: pull
+        state: present
+        force_source: yes
+    - name: Create Mongo container
+      docker_container:
+        name: "mongo"
+        image: "mongo:4.2.7"
+        state: started
+        ports:
+          - "27017:27017"
+        env:
+          MONGO_INITDB_ROOT_USERNAME: "{{ mongo_root_user }}"
+          MONGO_INITDB_ROOT_PASSWORD: "{{ mongo_root_password }}"
+        volumes:
+          - mongo_data:/data/db
+    - name: Copy Mongo service to server
+      copy: src=WebblogServices/mongo_service.json dest=/etc/consul.d
+    - name: Restart consul service
+      systemd:
+        state: restarted
+        name: consul
+        daemon_reload: yes
+    - name: Copy Mongo Envoy service to server
+      copy: src=SystemdServices/envoy_mongo.service dest=/etc/systemd/system/envoy_mongo.service
+    - name: Start Register Mongo Service with Envoy
+      systemd:
+        state: restarted
+        name: envoy_mongo
+        daemon_reload: yes
+
+- hosts: webblog-app-vm
+  become_user: root
+  become: true
+  tasks:
+    - name: Download and install vault binary
+      unarchive:
+        src: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip"
+        dest: /usr/local/bin/
+        remote_src: True
+    - name: Create vault config directory
+      file: state=directory path=/etc/opt/vault/
+    - name: Copy vault config to server
+      copy: src=VaultConfig/vault_agent_config.hcl dest=/etc/opt/vault/
+    - name: Copy role_id for Vault Agent
+      copy: src=/tmp/app_role_id dest=/tmp/webblog_role_id
+    - name: Copy wrapped_secret_id for Vault Agent
+      copy: src=/tmp/app_wrap_secret_id dest=/tmp/webblog_wrapped_secret_id
+    - name: Copy vault service to server
+      copy: src=SystemdServices/vault.service dest=/etc/systemd/system/vault.service
+    - name: Start vault service
+      systemd:
+        state: started
+        name: vault
+        daemon_reload: yes
+    - pause:
+        seconds: 15
+    - name: Copy Webblog App
+      copy: src=../../Application/app dest=/home/adminuser/
+    - name: Install Webblog Python Dependencies
+      pip:
+        requirements: /home/adminuser/app/requirements.txt
+    - name: Copy Webblog App service to server
+      copy: src=SystemdServices/webblog.service dest=/etc/systemd/system/webblog.service
+    - name: Start Webblog App service
+      systemd:
+        state: restarted
+        name: webblog
+        daemon_reload: yes
+    - name: Copy Webblog App service to server
+      copy: src=WebblogServices/webblog_app_service.json dest=/etc/consul.d
+    - name: Restart consul service
+      systemd:
+        state: restarted
+        name: consul
+        daemon_reload: yes
+    - name: Copy Webblog App service to server
+      copy: src=SystemdServices/envoy_webblog.service dest=/etc/systemd/system/envoy_webblog.service
+    - name: Start Register Webblog Service with Envoy
+      systemd:
+        state: restarted
+        name: envoy_webblog
+        daemon_reload: yes

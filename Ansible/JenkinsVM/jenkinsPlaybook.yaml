@@ -1,0 +1,50 @@
+---
+- hosts: all
+  become_user: root
+  become: true
+  tasks:
+    - name: Install pip3 and unzip
+      apt:
+        update_cache: yes
+        pkg:
+        - python3-pip
+        - unzip
+      register: result
+      until: result is not failed
+      retries: 5
+      delay: 5
+    - name: Install Docker module for Python
+      pip:
+        name: docker
+    - name: Pull the Jenkins Docker image
+      docker_image:
+        name: "samgabrail/jenkins-tf-vault-ansible:latest"
+        source: pull
+        state: present
+        force_source: yes
+    - name: Change file ownership, group and permissions
+      file:
+        path: /home/adminuser/jenkins_data
+        state: directory
+        recurse: yes
+        owner: adminuser
+        group: adminuser
+    - name: Create Jenkins container
+      docker_container:
+        name: "jenkins"
+        image: "samgabrail/jenkins-tf-vault-ansible:latest"
+        state: started
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - /home/adminuser/jenkins_data:/var/jenkins_home
+    - name: Create .ssh directory
+      file: state=directory path=/home/adminuser/jenkins_data/.ssh
+    - name: Copy the Private SSH Key for Jenkins to Access Azure VMs
+      copy:
+        src: /Users/kalam.abdul/.ssh/mykey.pem
+        dest: /home/adminuser/jenkins_data/.ssh/id_rsa
+        owner: adminuser
+        group: adminuser
+        mode: 0400
