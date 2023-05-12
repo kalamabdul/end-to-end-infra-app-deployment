@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-def ROLE_ID = "11f503c6-9c4f-d223-7845-64b177864ddf" //this is the Role-id for the Pipeline and needs to be inserted manually by a Vault Admin
+def ROLE_ID = "10966f7b-785b-dee0-c467-e8b769268de8" //this is the Role-id for the Pipeline and needs to be inserted manually by a Vault Admin
 def VAULT_ADDR = "https://vault.kalamabdul.com:8200"
 env.VAULT_ADDR = VAULT_ADDR
 
