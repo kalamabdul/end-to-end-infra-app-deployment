@@ -81,9 +81,9 @@ node() {
               terraform fmt
               terraform validate
               terraform apply --auto-approve
-              sed -i "s/<placeholder_app>/$(terraform output -json webblog_public_dns | jq -r '.["samg-webblog-01-ip"]')/g" ../../Ansible/WebblogApp/inventory
-              sed -i "s/<placeholder_db>/$(terraform output -json webblog_public_dns | jq -r '.["samg-webblog-02-ip"]')/g" ../../Ansible/WebblogApp/inventory
-              sed -i "s/<placeholder_consul_server>/$(terraform output -json webblog_public_dns | jq -r '.["samg-webblog-03-ip"]')/g" ../../Ansible/WebblogApp/inventory
+              sed -i "s/<placeholder_app>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-01-ip"]')/g" ../../Ansible/WebblogApp/inventory
+              sed -i "s/<placeholder_db>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-02-ip"]')/g" ../../Ansible/WebblogApp/inventory
+              sed -i "s/<placeholder_consul_server>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-03-ip"]')/g" ../../Ansible/WebblogApp/inventory
           '''
         }  
         stage("Create Role-id and Wrapped Secret-id for the Vault Agent on App VM") {
