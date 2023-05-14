@@ -99,7 +99,7 @@ node() {
           // set +x below is to hide the response from vault with the mongo creds from displaying in Jenkins' logs
           sh '''
               set +x
-              cd /var/jenkins_home/workspace/Webblog_App@script/Ansible/WebblogApp
+              cd /var/jenkins_home/workspace/Webblog_App/Ansible/WebblogApp
               ansible-playbook -i inventory --extra-vars "mongo_root_user=$(vault kv get -field=username internal/webblog/mongodb) mongo_root_password=$(vault kv get -field=password internal/webblog/mongodb)" appPlaybook.yaml
           '''
         } 
