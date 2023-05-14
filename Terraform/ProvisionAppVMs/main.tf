@@ -38,11 +38,11 @@ locals {
 // Using the same resource group because our Vault Azure secrets is tied to this specific resource group
 
 data "azurerm_resource_group" "jenkinsresourcegroup" {
-  name = "${var.prefix}-jenkins"
+  name = "testka"
 }
 
 data "azurerm_image" "docker-image" {
-  name                = "samg-Docker"
+  name                = "jenkins-tf-ansible-vault"
   resource_group_name = data.azurerm_resource_group.jenkinsresourcegroup.name
 }
 

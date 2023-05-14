@@ -28,7 +28,7 @@ variable "app-prefix" {
 
 variable "location" {
   description = "The region where the virtual network is created."
-  default     = "centralus"
+  default     = "eastus"
 }
 
 variable "address_space" {
@@ -59,5 +59,5 @@ variable "adminuser" {
 variable "vm_names" {
   description = "Names of the VMs"
   type        = set(string)
-  default     = ["samg-webblog-01", "samg-webblog-02", "samg-webblog-03"]
+  default     = ["ka-webblog-01", "ka-webblog-02", "ka-webblog-03"]
 }
