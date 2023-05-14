@@ -1,12 +1,1 @@
-{
-  "client_id": "36c1db71-095d-41ca-a73d-a799d5af7111",
-  "client_secret":"JG58Q~1UPnxIE1p~cpN6WfkUuBeXruaeTIcEtbIu",
-  "tenant_id":"0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec",
-  "subscription_id": "01b24509-e0a1-4448-87ad-03933757a88e",
-  
-  "myResourceGroup": "kalam-rsa",
-  "myPackerImage": "jenkins-tf-ansible-vault",
-  "vm_size": "Standard_A0",
-  "location": "East US",
-  "image_sku": "18.04-LTS"
-}
+.
