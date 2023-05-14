@@ -100,7 +100,7 @@ node() {
           sh '''
               set +x
               cd /var/jenkins_home/workspace/Webblog_App/Ansible/WebblogApp
-              ansible-playbook -i inventory --extra-vars "mongo_root_user=mongouser mongo_root_password=Gh4U2KijULqU" appPlaybook.yaml
+              ansible-playbook -i inventory --extra-vars "mongo_root_user=$(vault kv get -field=username internal/webblog/mongodb) mongo_root_password=$(vault kv get -field=password internal/webblog/mongodb)" appPlaybook.yaml
           '''
         } 
   }          
