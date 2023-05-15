@@ -1,7 +1,7 @@
 pid_file = "./pidfile"
 
 vault {
-  address = "http://vault.hashidemos.tekanaid.com:8200"
+  address = "https://vault.kalamabdul.com:8200"
 }
 
 auto_auth {
