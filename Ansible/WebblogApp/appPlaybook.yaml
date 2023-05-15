@@ -32,14 +32,6 @@
       apt_key:
         url: https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key
         state: present
-    - name: Add Envoy repository into sources list
-      apt_repository:
-        repo: deb [arch=amd64] https://dl.bintray.com/tetrate/getenvoy-deb bionic stable
-        state: present
-    - name: Install Envoy
-      apt:
-        name: getenvoy-envoy
-        update_cache: yes
 
 - hosts: consul_server
   become_user: root
