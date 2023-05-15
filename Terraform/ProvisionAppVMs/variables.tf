@@ -59,5 +59,5 @@ variable "adminuser" {
 variable "vm_names" {
   description = "Names of the VMs"
   type        = set(string)
-  default     = ["ka-webblog-01", "ka-webblog-02", "ka-webblog-03"]
+  default     = ["ka-webblog-01"]
 }
