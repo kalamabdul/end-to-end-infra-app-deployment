@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-def ROLE_ID = "10966f7b-785b-dee0-c467-e8b769268de8" //this is the Role-id for the Pipeline and needs to be inserted manually by a Vault Admin
+//def ROLE_ID = "10966f7b-785b-dee0-c467-e8b769268de8" //this is the Role-id for the Pipeline and needs to be inserted manually by a Vault Admin
 def VAULT_ADDR = "https://vault.kalamabdul.com:8200"
 env.VAULT_ADDR = VAULT_ADDR
 
@@ -25,14 +25,14 @@ node() {
     stage('checkout') {
         checkout scm
     }
-        // the stage below doesn't work with the Vault Jenkins policy to write wrapped secrets only, an admin needs to manually provide the ROLE_ID as defined at the top of this file
-        // stage ("Get Role ID for the pipeline AppRole") {
-        //   def ROLE_ID = ""
-        //   env.ROLE_ID = sh(
-        //     returnStdout: true,
-        //     script: "vault read -field=role_id auth/pipeline/role/pipeline-approle/role-id"
-        //   )
-        // }
+        the stage below doesn't work with the Vault Jenkins policy to write wrapped secrets only, an admin needs to manually provide the ROLE_ID as defined at the top of this file
+        stage ("Get Role ID for the pipeline AppRole") {
+          def ROLE_ID = ""
+          env.ROLE_ID = sh(
+            returnStdout: true,
+            script: "vault read -field=role_id auth/pipeline/role/pipeline-approle/role-id"
+          )
+        }
         stage("Unwrap Secret ID"){
           def UNWRAPPED_SID = ""
           env.UNWRAPPED_SID = sh(
