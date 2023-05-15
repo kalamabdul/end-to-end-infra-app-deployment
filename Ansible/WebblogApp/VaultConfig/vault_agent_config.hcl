@@ -22,3 +22,15 @@ auto_auth {
       }
     }
 }
+
+cache {
+
+}
+api_proxy {
+  use_auto_auth_token = "force"
+
+}
+listener "tcp" {
+  address = "127.0.0.1:8007"
+  tls_disable = true
+}
