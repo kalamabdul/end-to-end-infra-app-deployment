@@ -17,7 +17,7 @@
         - software-properties-common
       register: result
       until: result is not failed
-      retries: 20
+      retries: 3
       delay: 30
     - name: Download and install consul binary
       unarchive:
