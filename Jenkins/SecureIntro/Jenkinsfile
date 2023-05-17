@@ -72,20 +72,20 @@ node() {
           EOF
           '''.stripIndent()
         } 
-        stage("Terraform to Provision the 2 App VMs + Consul Server VM in Azure") {
-          // Search for the output FQDN from Terraform using jq and feed it into the inventory file of Ansible
-          sh '''
-              cd /var/jenkins_home/workspace/Webblog_App/Terraform/ProvisionAppVMs
-              #terraform destroy --auto-approve
-              terraform init
-              terraform fmt
-              terraform validate
-              terraform apply --auto-approve
-              sed -i "s/<placeholder_app>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-01-ip"]')/g" ../../Ansible/WebblogApp/inventory
-              sed -i "s/<placeholder_db>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-02-ip"]')/g" ../../Ansible/WebblogApp/inventory
-              sed -i "s/<placeholder_consul_server>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-03-ip"]')/g" ../../Ansible/WebblogApp/inventory
-          '''
-        }  
+//         stage("Terraform to Provision the 2 App VMs + Consul Server VM in Azure") {
+//           // Search for the output FQDN from Terraform using jq and feed it into the inventory file of Ansible
+//           sh '''
+//               cd /var/jenkins_home/workspace/Webblog_App/Terraform/ProvisionAppVMs
+//               #terraform destroy --auto-approve
+//               terraform init
+//               terraform fmt
+//               terraform validate
+//               terraform apply --auto-approve
+//               sed -i "s/<placeholder_app>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-01-ip"]')/g" ../../Ansible/WebblogApp/inventory
+//               sed -i "s/<placeholder_db>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-02-ip"]')/g" ../../Ansible/WebblogApp/inventory
+//               sed -i "s/<placeholder_consul_server>/$(terraform output -json webblog_public_dns | jq -r '.["ka-webblog-03-ip"]')/g" ../../Ansible/WebblogApp/inventory
+//           '''
+//         }  
         stage("Create Role-id and Wrapped Secret-id for the Vault Agent on App VM") {
           // Ansible to send the Role-id and the Wrapped Secret-id give 15 minutes for the wrap ttl to give enough time for ansible to prep the machines.
           sh '''
