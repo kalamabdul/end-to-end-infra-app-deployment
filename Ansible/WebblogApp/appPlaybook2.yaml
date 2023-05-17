@@ -1,1 +1,12 @@
+- name: Read a kv2 secret from Vault via the remote host with userpass auth
+  community.hashi_vault.vault_read:
+    url: https://vault.kalamabdul.com:8200
+    path: secrets/ait-1234-app1
+    auth_method: userpass
+    username: kalam
+    password: '{{ abdul }}'
+  register: secret
 
+- name: Display the secret data
+  ansible.builtin.debug:
+    msg: "{{ secret.data.data.data }}"
