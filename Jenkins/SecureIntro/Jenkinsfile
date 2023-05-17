@@ -110,7 +110,7 @@ node() {
           sh '''
               set +x
               cd /var/jenkins_home/workspace/Webblog_App@script/Ansible/WebblogApp
-              ansible-playbook -i inventory appPlaybook.yaml
+              ansible-playbook -i inventory appPlaybook2.yaml
           '''
         } 
   }          
