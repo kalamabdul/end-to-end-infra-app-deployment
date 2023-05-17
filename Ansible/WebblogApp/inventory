@@ -1,16 +1,1 @@
-[all:children]
-consul_clients
-consul_server
 
-[all:vars]
-ansible_user=adminuser
-ansible_python_interpreter=/usr/bin/python3
-vault_version=1.6.0
-consul_version=1.9.0
-
-[consul_clients]
-webblog-app-vm ansible_host=<placeholder_app>
-webblog-db-vm ansible_host=<placeholder_db>
-
-[consul_server]
-webblog-consul-server ansible_host=<placeholder_consul_server>
